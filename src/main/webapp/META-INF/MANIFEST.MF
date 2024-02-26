@@ -1,10 +1,10 @@
 Created-By: Apache Maven
-Main-Class: org.coderic.bank.endpoint.EndpointApplication
+Main-Class: org.coderic.bank.auth.AuthenticationApplication
 Manifest-Version: 2.0
-Name: coderic-bank/endpoint
-Specification-Title: Endpoint for Bank Transactions
+Name: coderic-bank/authentication
+Specification-Title: Authentication for Bank Transactions
 Specification-Version: 1.0
 Specification-Vendor: Coderic
-Implementation-Title: coderic.endpoint
+Implementation-Title: coderic.authentication
 Implementation-Vendor: Coderic
 

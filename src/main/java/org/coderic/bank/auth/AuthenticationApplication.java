@@ -1,13 +1,13 @@
-package org.coderic.bank.endpoint;
+package org.coderic.bank.auth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EndpointApplication {
+public class AuthenticationApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EndpointApplication.class, args);
+		SpringApplication.run(AuthenticationApplication.class, args);
 	}
 
 }

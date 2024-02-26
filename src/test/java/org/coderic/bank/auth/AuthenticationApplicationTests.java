@@ -1,10 +1,10 @@
-package org.coderic.bank.endpoint;
+package org.coderic.bank.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EndpointApplicationTests {
+class AuthenticationApplicationTests {
 
 	@Test
 	void contextLoads() {
