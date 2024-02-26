@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>Authentication for Bank Transactions</name>
-	<description>Authentication Transactions Endpoint</description>
+	<description>Authentication for Bank Transactions</description>
 	<url>https://github.com/CodericBusiness/org.coderic.bank.auth</url>
 	<organization>
 		<name>Coderic</name>
@@ -64,10 +64,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!--dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
