@@ -4,7 +4,6 @@ import org.coderic.bank.auth.services.DummyUserDetailsService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,15 +11,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.kerberos.authentication.KerberosAuthenticationProvider;
 import org.springframework.security.kerberos.authentication.sun.SunJaasKerberosClient;
 import org.springframework.security.kerberos.authentication.sun.SunJaasKerberosTicketValidator;
 import org.springframework.security.kerberos.web.authentication.SpnegoAuthenticationProcessingFilter;
 import org.springframework.security.kerberos.web.authentication.SpnegoEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
@@ -31,32 +27,34 @@ public class WebSecurityConfig extends AbstractHttpConfigurer<WebSecurityConfig,
 
     @Value("${app.keytab-location}")
     private String keytabLocation;
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
+
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        http.addFilterBefore(spnegoAuthenticationProcessingFilter(authenticationManager), BasicAuthenticationFilter.class);
+        http.addFilterBefore(spnegoAuthenticationProcessingFilter(authenticationManager),
+                BasicAuthenticationFilter.class);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .exceptionHandling((exceptions) -> exceptions
-                .defaultAuthenticationEntryPointFor(
-                        spnegoEntryPoint(),
-                        new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
-                )
-        );
+                        .defaultAuthenticationEntryPointFor(
+                                spnegoEntryPoint(),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)));
+        http
+                .headers(headers -> headers
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .preload(false)
+                                .maxAgeInSeconds(40)));
         return http.build();
     }
+
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
         return http
@@ -81,7 +79,8 @@ public class WebSecurityConfig extends AbstractHttpConfigurer<WebSecurityConfig,
     }
 
     @Bean
-    public SpnegoAuthenticationProcessingFilter spnegoAuthenticationProcessingFilter(AuthenticationManager authenticationManager) {
+    public SpnegoAuthenticationProcessingFilter spnegoAuthenticationProcessingFilter(
+            AuthenticationManager authenticationManager) {
         SpnegoAuthenticationProcessingFilter filter = new SpnegoAuthenticationProcessingFilter();
         filter.setAuthenticationManager(authenticationManager);
         return filter;
