@@ -1,9 +1,9 @@
 package org.coderic.bank.auth.config;
 
 import org.coderic.bank.auth.services.DummyUserDetailsService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,21 +19,22 @@ import org.springframework.security.kerberos.authentication.sun.SunJaasKerberosT
 import org.springframework.security.kerberos.web.authentication.SpnegoAuthenticationProcessingFilter;
 import org.springframework.security.kerberos.web.authentication.SpnegoEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 @Configuration
-public class WebSecurityConfig extends AbstractHttpConfigurer<WebSecurityConfig, HttpSecurity> {
+public class WebSecurityConfig {
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        http.addFilterBefore(spnegoAuthenticationProcessingFilter(authenticationManager), BasicAuthenticationFilter.class);
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        http.addFilterBefore(spnegoAuthenticationProcessingFilter(authenticationManager), BasicAuthenticationFilter.class);
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .anyRequest().authenticated()
@@ -45,14 +46,6 @@ public class WebSecurityConfig extends AbstractHttpConfigurer<WebSecurityConfig,
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                 )
         );
-        http
-                .headers(headers -> headers
-                        .httpStrictTransportSecurity(hsts -> hsts
-                                .includeSubDomains(true)
-                                .preload(false)
-                                .maxAgeInSeconds(40)
-                        )
-                );
         return http.build();
     }
     @Bean
@@ -88,7 +81,7 @@ public class WebSecurityConfig extends AbstractHttpConfigurer<WebSecurityConfig,
     @Bean
     public SunJaasKerberosTicketValidator sunJaasKerberosTicketValidator() {
         SunJaasKerberosTicketValidator ticketValidator = new SunJaasKerberosTicketValidator();
-        ticketValidator.setServicePrincipal("HTTP/localhost");
+        ticketValidator.setServicePrincipal("HTTP/coderic.org@CODERIC.ORG");
         ticketValidator.setKeyTabLocation(new FileSystemResource("/tmp/bank-auth.keytab"));
         ticketValidator.setDebug(true);
         return ticketValidator;
