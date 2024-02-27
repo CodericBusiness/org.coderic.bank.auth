@@ -22,11 +22,6 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 @Configuration
 public class WebSecurityConfig extends AbstractHttpConfigurer<WebSecurityConfig, HttpSecurity> {
-    @Value("${app.service-principal}")
-    private String servicePrincipal;
-
-    @Value("${app.keytab-location}")
-    private String keytabLocation;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -89,8 +84,8 @@ public class WebSecurityConfig extends AbstractHttpConfigurer<WebSecurityConfig,
     @Bean
     public SunJaasKerberosTicketValidator sunJaasKerberosTicketValidator() {
         SunJaasKerberosTicketValidator ticketValidator = new SunJaasKerberosTicketValidator();
-        ticketValidator.setServicePrincipal(servicePrincipal);
-        ticketValidator.setKeyTabLocation(new FileSystemResource(keytabLocation));
+        ticketValidator.setServicePrincipal("HTTP/localhost");
+        ticketValidator.setKeyTabLocation(new FileSystemResource("/tmp/bank-auth.keytab"));
         ticketValidator.setDebug(true);
         return ticketValidator;
     }
