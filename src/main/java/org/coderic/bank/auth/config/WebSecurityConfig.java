@@ -1,6 +1,7 @@
 package org.coderic.bank.auth.config;
 
 import org.coderic.bank.auth.services.DummyUserDetailsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -22,7 +23,11 @@ import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 @Configuration
 public class WebSecurityConfig {
+    @Value("app.service-principal")
+    private String servicePrincipal;
 
+    @Value("app.keytab-location")
+    private String keytabLocation;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -78,8 +83,8 @@ public class WebSecurityConfig {
     @Bean
     public SunJaasKerberosTicketValidator sunJaasKerberosTicketValidator() {
         SunJaasKerberosTicketValidator ticketValidator = new SunJaasKerberosTicketValidator();
-        ticketValidator.setServicePrincipal("HTTP/coderic.org@CODERIC.ORG");
-        ticketValidator.setKeyTabLocation(new FileSystemResource("/tmp/bank-auth.keytab"));
+        ticketValidator.setServicePrincipal(servicePrincipal);
+        ticketValidator.setKeyTabLocation(new FileSystemResource(keytabLocation));
         ticketValidator.setDebug(true);
         return ticketValidator;
     }
