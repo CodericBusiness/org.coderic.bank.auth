@@ -79,7 +79,7 @@ public class WebSecurityConfig {
     public SunJaasKerberosTicketValidator sunJaasKerberosTicketValidator() {
         SunJaasKerberosTicketValidator ticketValidator = new SunJaasKerberosTicketValidator();
         ticketValidator.setServicePrincipal("HTTP/coderic.net@CODERIC.NET");
-        ticketValidator.setKeyTabLocation(new FileSystemResource("/tmp/bank-auth.keytab"));
+        ticketValidator.setKeyTabLocation(new FileSystemResource("/tmp/coderic.net.keytab"));
         ticketValidator.setDebug(true);
         return ticketValidator;
     }
